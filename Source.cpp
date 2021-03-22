@@ -28,6 +28,7 @@ void push_back(head* l, int val, int words_count) {
     node* n, * cur;
 
     n = (node*)malloc(sizeof(node));
+    if (n == NULL) exit(-2);
     n->len = val; n->next = NULL; n->quantity = 0;
     n->start = 0;
 
@@ -77,8 +78,9 @@ node* search_max_val(head* h) {
 
     node* cur = h->head;
     node* max_node = (node*)malloc(sizeof(node));
+    node* pre_max_node = (node*)malloc(sizeof(node));
     int max = 0;
-    int i = 0;
+    int i = 0, q;
 
     while (i != h->size && cur) {
 
@@ -94,7 +96,33 @@ node* search_max_val(head* h) {
         }
         i++;
     }
-    return max_node;
+    q = max;
+     max = -1;
+     i = 0;
+
+    //printf("max %d\n", max_node->quantity);
+     cur = h->head;
+    while (i != h->size && cur) {
+
+       // printf("n\n");
+
+        if (cur->quantity > max && cur->quantity < q) {
+
+            max = cur->quantity;
+            pre_max_node = cur;
+            //pre_max_node->quantity = cur->quantity;
+            cur = cur->next;
+            //printf("%d \n", max);
+
+        }
+        else if (cur->next != NULL) {
+            cur = cur->next;
+            //printf("%d \n", pre_max_node->quantity);
+        }
+        i++;
+    }
+  
+    return pre_max_node;
 }
 
 
@@ -131,7 +159,7 @@ int copy_words_to_array(char* w, FILE* f, char** words, head* h) {
 
     while (w[i] != 0) {
 
-        fscanf(f, "%c", &w[i]);
+       if (fscanf(f, "%c", &w[i]) ==NULL) return -1;
 
         if ((w[i] >= 'a' && w[i] <= 'z') || (w[i] >= 'A' && w[i] <= 'Z')) {
             if (in_word == 0) start_w = i;
